@@ -1,6 +1,5 @@
 <!-- resources/views/escalas/registrar.blade.php -->
 
-
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -10,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         /* Seu CSS aqui */
-        .data-unico-dia, .dias-recorrentes {
+        .data-unico-dia {
             display: none;
         }
     </style>
@@ -22,98 +21,44 @@
 
         <h1>Gerar Escala</h1>
         <form action="{{ route('escalas.store') }}" method="POST">
-    @csrf
-    @foreach ($funcionarios as $funcionario)
-        <div class="form-group">
-            <input type="hidden" name="escalas[{{ $funcionario->id }}][funcionario_id]" value="{{ $funcionario->id }}">
-            
-            <h2>{{ $funcionario->nome }}</h2>
-            
-            <div>
-                <label for="funcionario-{{ $funcionario->id }}-horario_inicio">Horário de Trabalho:</label>
-                <input type="time" name="escalas[{{ $funcionario->id }}][horario_inicio]" id="funcionario-{{ $funcionario->id }}-horario_inicio" required />
-                <input type="time" name="escalas[{{ $funcionario->id }}][horario_fim]" id="funcionario-{{ $funcionario->id }}-horario_fim" required />
-            </div>
-            
-            <div>
-                <label for="funcionario-{{ $funcionario->id }}-unico_dia">Escala para um único dia:</label>
-                <input type="checkbox" name="escalas[{{ $funcionario->id }}][unico_dia]" id="funcionario-{{ $funcionario->id }}-unico_dia" />
-            </div>
+            @csrf
+            @foreach ($funcionarios as $funcionario)
+                <div class="form-group">
+                    <input type="hidden" name="escalas[{{ $funcionario->id }}][funcionario_id]" value="{{ $funcionario->id }}">
 
-            <div class="data-unico-dia">
-                <label for="funcionario-{{ $funcionario->id }}-data">Data:</label>
-                <input type="date" name="escalas[{{ $funcionario->id }}][data]" id="funcionario-{{ $funcionario->id }}-data" />
-            </div>
-            
-            <div class="form-group">
-              <label for="funcionario-{{ $funcionario->id }}-dias">Dias Recorrentes:</label>
-             <input type="text" name="escalas[{{ $funcionario->id }}][dias]" id="funcionario-{{ $funcionario->id }}-dias" placeholder="Segunda, Quarta, Sexta" />
-            </div>
+                    <h2>{{ $funcionario->nome }}</h2>
+
+                    <div>
+                        <label for="funcionario-{{ $funcionario->id }}-horario_inicio">Horário de Trabalho:</label>
+                        <input type="time" name="escalas[{{ $funcionario->id }}][horario_inicio]" id="funcionario-{{ $funcionario->id }}-horario_inicio" required />
+                        <input type="time" name="escalas[{{ $funcionario->id }}][horario_fim]" id="funcionario-{{ $funcionario->id }}-horario_fim" required />
+                    </div>
+
+                    <div>
+                        <label for="funcionario-{{ $funcionario->id }}-datas">Datas:</label>
+                        <input type="text" name="escalas[{{ $funcionario->id }}][datas][]" id="funcionario-{{ $funcionario->id }}-datas" placeholder="Selecione as datas" required />
+                        </div>
+
+                    <div>
+                        <label for="funcionario-{{ $funcionario->id }}-observacoes">Observações:</label>
+                        <textarea name="escalas[{{ $funcionario->id }}][observacoes]" id="funcionario-{{ $funcionario->id }}-observacoes"></textarea>
+                    </div>
+                </div>
+            @endforeach
 
             <div class="form-group">
-            <label for="funcionario-{{ $funcionario->id }}-calendario">Selecionar Dias Específicos:</label>
-            <input type="text" name="escalas[{{ $funcionario->id }}][calendario]" id="funcionario-{{ $funcionario->id }}-calendario" placeholder="Selecione as datas">
+                <button type="submit">Salvar Escalas</button>
             </div>
-
-            <div>
-                <label for="funcionario-{{ $funcionario->id }}-observacoes">Observações:</label>
-                <textarea name="escalas[{{ $funcionario->id }}][observacoes]" id="funcionario-{{ $funcionario->id }}-observacoes"></textarea>
-            </div>
-        </div>
-    @endforeach
-
-    <div class="form-group">
-        <button type="submit">Salvar Escalas</button>
-    </div>
-</form>
-
+        </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    flatpickr('#funcionario-{{ $funcionario->id }}-calendario', {
-        mode: "multiple",
-        dateFormat: "Y-m-d",
-        onChange: function(selectedDates, dateStr, instance) {
-            document.querySelector('#funcionario-{{ $funcionario->id }}-dias').value = dateStr;
-        }
-    });
-
-    document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            const formGroup = this.closest('.form-group');
-            const dataDiv = formGroup.querySelector('.data-unico-dia');
-            const diasDiv = formGroup.querySelector('.dias-recorrentes');
-            const calendarioDiv = formGroup.querySelector('#funcionario-{{ $funcionario->id }}-calendario').parentElement;
-
-            if (this.checked) {
-                dataDiv.style.display = 'block';
-                diasDiv.style.display = 'none';
-                calendarioDiv.style.display = 'none';
-            } else {
-                dataDiv.style.display = 'none';
-                diasDiv.style.display = 'block';
-                calendarioDiv.style.display = 'block';
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('input[type="text"]', {
+                mode: "multiple",
+                dateFormat: "Y-m-d"
+            });
         });
-
-        const formGroup = checkbox.closest('.form-group');
-        const dataDiv = formGroup.querySelector('.data-unico-dia');
-        const diasDiv = formGroup.querySelector('.dias-recorrentes');
-        const calendarioDiv = formGroup.querySelector('#funcionario-{{ $funcionario->id }}-calendario').parentElement;
-
-        if (checkbox.checked) {
-            dataDiv.style.display = 'block';
-            diasDiv.style.display = 'none';
-            calendarioDiv.style.display = 'none';
-        } else {
-            dataDiv.style.display = 'none';
-            diasDiv.style.display = 'block';
-            calendarioDiv.style.display = 'block';
-        }
-    });
-});
-
-</script>
+    </script>
 </body>
 </html>

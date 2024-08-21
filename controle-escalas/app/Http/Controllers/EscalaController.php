@@ -64,55 +64,34 @@ class EscalaController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'escalas' => 'required|array',
-            'escalas.*.funcionario_id' => 'required|exists:funcionarios,id',
-            'escalas.*.horario_inicio' => 'required|date_format:H:i',
-            'escalas.*.horario_fim' => 'required|date_format:H:i',
-            'escalas.*.unico_dia' => 'nullable|boolean',
-            'escalas.*.data' => 'nullable|required_if:escalas.*.unico_dia,true|date',
-            'escalas.*.dias' => 'nullable|required_if:escalas.*.unico_dia,false|string',
-            'escalas.*.observacoes' => 'nullable|string',
-        ]);
+{
+    $data = $request->input('escalas');
 
-        // Opcional: Limpar as escalas existentes - descomente se precisar
-        // Escala::truncate();
+    foreach ($data as $escola) {
+        if (isset($escola['funcionario_id'])) {
+            $datas = $escola['datas'] ?? []; // Recebe as datas selecionadas e garante que seja um array
 
-        // Processa os dados e salva na tabela escalas
-        foreach ($data['escalas'] as $escala) {
-            if (!empty($escala['unico_dia'])) {
-                // Escala para um único dia
-                Escala::create([
-                    'funcionario_id' => $escala['funcionario_id'],
-                    'horario_inicio' => $escala['horario_inicio'],
-                    'horario_fim' => $escala['horario_fim'],
-                    'data' => $escala['data'],
-                    'dias' => $escala['dias'],
-                    'observacoes' => $escala['observacoes'],
-                    'recorrente' => false,
-                ]);
-            } elseif (!empty($escala['dias'])) {
-                // Escala para múltiplos dias
-                $dias = explode(',', $escala['dias']);
-                foreach ($dias as $dia) {
-                    // Verifique se o dia é uma data válida
-                    $dataLimpa = trim($dia);
-                    if (strtotime($dataLimpa)) {
-                        Escala::create([
-                            'funcionario_id' => $escala['funcionario_id'],
-                            'data' => $dataLimpa,
-                            'horario_inicio' => $escala['horario_inicio'],
-                            'horario_fim' => $escala['horario_fim'],
-                            'observacoes' => $escala['observacoes'],
-                            'recorrente' => true,
-                        ]);
-                    }
+            // Verifica se $datas é um array
+            if (is_array($datas)) {
+                foreach ($datas as $data) {
+                    // Armazena a escala no banco
+                    Escala::create([
+                        'funcionario_id' => $escola['funcionario_id'],
+                        'horario_inicio' => $escola['horario_inicio'],
+                        'horario_fim' => $escola['horario_fim'],
+                        'data' => $data, // Cada data individual
+                        'observacoes' => $escola['observacoes'],
+                    ]);
                 }
+            } else {
+                // Tratar o caso onde 'datas' não é um array
+                \Log::error('Datas não é um array: ', ['datas' => $datas]);
             }
         }
-        dd($data);
-
-        return redirect()->route('escalas.selecionar')->with('success', 'Escalas salvas com sucesso.');
     }
+    dd($request->all());
+    return redirect()->route('escalas.create')->with('success', 'Escalas salvas com sucesso.');
+}
+
+
 }
