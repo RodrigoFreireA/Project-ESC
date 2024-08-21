@@ -45,9 +45,14 @@
                 <input type="date" name="escalas[{{ $funcionario->id }}][data]" id="funcionario-{{ $funcionario->id }}-data" />
             </div>
             
-            <div class="dias-recorrentes">
-                <label for="funcionario-{{ $funcionario->id }}-dias">Dias Recorrentes:</label>
-                <input type="text" name="escalas[{{ $funcionario->id }}][dias]" id="funcionario-{{ $funcionario->id }}-dias" placeholder="Segunda, Quarta, Sexta" />
+            <div class="form-group">
+              <label for="funcionario-{{ $funcionario->id }}-dias">Dias Recorrentes:</label>
+             <input type="text" name="escalas[{{ $funcionario->id }}][dias]" id="funcionario-{{ $funcionario->id }}-dias" placeholder="Segunda, Quarta, Sexta" />
+            </div>
+
+            <div class="form-group">
+            <label for="funcionario-{{ $funcionario->id }}-calendario">Selecionar Dias Específicos:</label>
+            <input type="text" name="escalas[{{ $funcionario->id }}][calendario]" id="funcionario-{{ $funcionario->id }}-calendario" placeholder="Selecione as datas">
             </div>
 
             <div>
@@ -65,40 +70,50 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            flatpickr('input[type="date"]', {
-                dateFormat: "Y-m-d"
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('#funcionario-{{ $funcionario->id }}-calendario', {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+            document.querySelector('#funcionario-{{ $funcionario->id }}-dias').value = dateStr;
+        }
+    });
 
-            document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const formGroup = this.closest('.form-group');
-                    const dataDiv = formGroup.querySelector('.data-unico-dia');
-                    const diasDiv = formGroup.querySelector('.dias-recorrentes');
-                    
-                    if (this.checked) {
-                        dataDiv.style.display = 'block';
-                        diasDiv.style.display = 'none';
-                    } else {
-                        dataDiv.style.display = 'none';
-                        diasDiv.style.display = 'block';
-                    }
-                });
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const formGroup = this.closest('.form-group');
+            const dataDiv = formGroup.querySelector('.data-unico-dia');
+            const diasDiv = formGroup.querySelector('.dias-recorrentes');
+            const calendarioDiv = formGroup.querySelector('#funcionario-{{ $funcionario->id }}-calendario').parentElement;
 
-                // Inicializa o estado do formulário
-                const formGroup = checkbox.closest('.form-group');
-                const dataDiv = formGroup.querySelector('.data-unico-dia');
-                const diasDiv = formGroup.querySelector('.dias-recorrentes');
-                
-                if (checkbox.checked) {
-                    dataDiv.style.display = 'block';
-                    diasDiv.style.display = 'none';
-                } else {
-                    dataDiv.style.display = 'none';
-                    diasDiv.style.display = 'block';
-                }
-            });
+            if (this.checked) {
+                dataDiv.style.display = 'block';
+                diasDiv.style.display = 'none';
+                calendarioDiv.style.display = 'none';
+            } else {
+                dataDiv.style.display = 'none';
+                diasDiv.style.display = 'block';
+                calendarioDiv.style.display = 'block';
+            }
         });
-    </script>
+
+        const formGroup = checkbox.closest('.form-group');
+        const dataDiv = formGroup.querySelector('.data-unico-dia');
+        const diasDiv = formGroup.querySelector('.dias-recorrentes');
+        const calendarioDiv = formGroup.querySelector('#funcionario-{{ $funcionario->id }}-calendario').parentElement;
+
+        if (checkbox.checked) {
+            dataDiv.style.display = 'block';
+            diasDiv.style.display = 'none';
+            calendarioDiv.style.display = 'none';
+        } else {
+            dataDiv.style.display = 'none';
+            diasDiv.style.display = 'block';
+            calendarioDiv.style.display = 'block';
+        }
+    });
+});
+
+</script>
 </body>
 </html>

@@ -14,6 +14,7 @@ class Escala extends Model
         'horario_fim',
         'recorrente',
         'data',
+        'dias',
         'observacoes', // Adicione aqui
     ];
 

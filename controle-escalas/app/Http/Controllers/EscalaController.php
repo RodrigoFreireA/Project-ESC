@@ -50,6 +50,7 @@ class EscalaController extends Controller
 
         $funcionarios = Funcionario::whereIn('id', $funcionariosSelecionados)->get();
 
+        
         return view('escalas.registrar', compact('funcionarios'));
     }
 
@@ -84,9 +85,10 @@ class EscalaController extends Controller
                 // Escala para um único dia
                 Escala::create([
                     'funcionario_id' => $escala['funcionario_id'],
-                    'data' => $escala['data'],
                     'horario_inicio' => $escala['horario_inicio'],
                     'horario_fim' => $escala['horario_fim'],
+                    'data' => $escala['data'],
+                    'dias' => $escala['dias'],
                     'observacoes' => $escala['observacoes'],
                     'recorrente' => false,
                 ]);
@@ -109,7 +111,8 @@ class EscalaController extends Controller
                 }
             }
         }
+        dd($data);
 
-        return redirect()->route('home')->with('success', 'Escalas salvas com sucesso.');
+        return redirect()->route('escalas.selecionar')->with('success', 'Escalas salvas com sucesso.');
     }
 }
