@@ -9,20 +9,19 @@ use App\Http\Controllers\EscalaController;
 Route::get('/', [FuncionarioController::class, 'home'])->name('home');
 
 // Rotas para Funcionários
-Route::get('/funcionarios/create', [FuncionarioController::class, 'create'])->name('funcionarios.create');
-Route::post('/funcionarios', [FuncionarioController::class, 'store'])->name('funcionarios.store');
-Route::get('/funcionarios/edit/{id}', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
-Route::put('/funcionarios/{id}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
-Route::delete('/funcionarios/{id}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');
-
-// Rotas para Ausências
-Route::get('/ausencias/create', [AusenciaController::class, 'create'])->name('ausencias.create');
-Route::post('/ausencias', [AusenciaController::class, 'store'])->name('ausencias.store');
-
-// routes/web.php
+Route::prefix('funcionarios')->group(function () {
+    Route::get('/create', [FuncionarioController::class, 'create'])->name('funcionarios.create');
+    Route::post('/', [FuncionarioController::class, 'store'])->name('funcionarios.store');
+    Route::get('/edit/{id}', [FuncionarioController::class, 'edit'])->name('funcionarios.edit');
+    Route::put('/{id}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
+    Route::delete('/{id}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');
+});
 
 
-Route::get('/escalas/create', [EscalaController::class, 'create'])->name('escalas.create');
-Route::post('/escalas/store', [EscalaController::class, 'store'])->name('escalas.store');
-
-
+Route::prefix('escalas')->group(function () {
+    Route::get('/create', [EscalaController::class, 'create'])->name('escalas.create');
+    Route::get('/selecionar', [EscalaController::class, 'selecionar'])->name('escalas.selecionar');
+    Route::post('/registrar', [EscalaController::class, 'registrar'])->name('escalas.registrar');
+    Route::post('/store', [EscalaController::class, 'store'])->name('escalas.store'); // Corrigido
+    Route::get('/{funcionario}', [EscalaController::class, 'show'])->name('escalas.show');
+});

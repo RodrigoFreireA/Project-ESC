@@ -9,10 +9,12 @@ class Escala extends Model
     use HasFactory;
 
     protected $fillable = [
-        'funcionario_id',
-        'data',
+        'funcionario_id',        
         'horario_inicio',
         'horario_fim',
+        'recorrente',
+        'data',
+        'observacoes', // Adicione aqui
     ];
 
     public function funcionario()

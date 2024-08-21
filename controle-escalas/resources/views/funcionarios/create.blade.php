@@ -53,7 +53,8 @@
             <button type="submit">Salvar</button>
         </form>
         
-        <a href="{{ route('home') }}">Voltar para o inicio</a>
+        <a href="{{ route('home') }}">Voltar para o início</a>
+        
         <!-- Tabela de Funcionários -->
         <h2>Lista de Funcionários</h2>
         <table>
@@ -85,6 +86,9 @@
                                 @method('DELETE')
                                 <button type="submit" onclick="return confirm('Você tem certeza que deseja excluir?')">Excluir</button>
                             </form>
+
+                            <!-- Link para Visualizar Escalas -->
+                            <a href="{{ route('escalas.show', ['funcionario' => $funcionario->id]) }}">Visualizar Escalas</a>
                         </td>
                     </tr>
                 @endforeach
