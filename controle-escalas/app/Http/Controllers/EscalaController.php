@@ -89,7 +89,6 @@ class EscalaController extends Controller
             }
         }
     }
-    dd($request->all());
     return redirect()->route('escalas.create')->with('success', 'Escalas salvas com sucesso.');
 }
 
