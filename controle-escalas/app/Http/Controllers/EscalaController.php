@@ -79,7 +79,7 @@ class EscalaController extends Controller
                         'funcionario_id' => $escola['funcionario_id'],
                         'horario_inicio' => $escola['horario_inicio'],
                         'horario_fim' => $escola['horario_fim'],
-                        'data' => $data, // Cada data individual
+                        'data' => json_encode($datas), // Converte o array de datas para JSON
                         'observacoes' => $escola['observacoes'],
                     ]);
                 }
