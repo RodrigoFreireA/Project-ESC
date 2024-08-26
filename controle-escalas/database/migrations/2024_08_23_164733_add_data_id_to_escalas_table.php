@@ -12,14 +12,17 @@ return new class extends Migration
     public function up()
 {
     Schema::table('escalas', function (Blueprint $table) {
-        $table->dropColumn('dias');
+        $table->unsignedBigInteger('data_id')->nullable();
+        $table->foreign('data_id')->references('id')->on('datas');
     });
 }
 
 public function down()
 {
     Schema::table('escalas', function (Blueprint $table) {
-        $table->string('dias')->nullable();
+        $table->dropForeign(['data_id']);
+        $table->dropColumn('data_id');
     });
 }
+
 };
